@@ -1,0 +1,108 @@
+#:import utils kivy.utils
+
+<HomeScreen>:
+    name: "home"
+    product_name: product_name
+    FloatLayout:
+        canvas:
+            Color:
+                rgb: utils.get_color_from_hex("#BEC6C3")
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        Label:
+            pos_hint: {'top':1,'left':.1}
+            size_hint: 1,.2
+            canvas.before:
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+                    source: "images/gatkins-demo.png"
+        Label:
+            text: "What would you like to buy today?"
+            pos_hint: {'top':.8,'left':1}
+            size_hint: .8,.1
+
+        TextInput:
+            id: product_name
+            multiline: False
+            pos_hint:{'top':.8,'right':1}
+            size_hint: .3,.1
+
+        GridLayout:
+            cols: 2
+            pos_hint:{'top':.7,'left':1}
+            size_hint: 1,.6 #80% of height of entire screen
+
+            MyButtons:
+            #supermarket
+                id: supermarket
+                name: "supermarket"
+                background_normal: "images/supermarket_logo.jpg"
+                on_press:
+                    self.inside_count("images/supermarket_logo.jpg","images/supermarket_logo_down.png")
+                    self.overwrite_id("supermarket")
+                canvas.before:
+                    Color:
+                        rgb: utils.get_color_from_hex("#BEC6C3")
+                    Line:
+                        width:2
+                        rectangle: self.x,self.y,self.width,self.height
+
+            MyButtons:
+            #electronics
+                id: electronics_store
+                name: "electronics_store"
+                background_normal: "images/electronics_logo.jpg"
+                on_press:
+                    self.inside_count("images/electronics_logo.jpg","images/electronics_logo_down.png")
+                    self.overwrite_id("electronics_store")
+                canvas.before:
+                    Color:
+                        rgb: utils.get_color_from_hex("#BEC6C3")
+                    Line:
+                        width:2
+                        rectangle: self.x,self.y,self.width,self.height
+
+            MyButtons:
+            #pets
+                id: pet_store
+                name: "pet_store"
+                background_normal: "images/pets_logo.jpg"
+                on_press:
+                    self.inside_count("images/pets_logo.jpg","images/pets_logo_down.png")
+                    self.overwrite_id("pet_store")
+                canvas.before:
+                    Color:
+                        rgb: utils.get_color_from_hex("#BEC6C3")
+                    Line:
+                        width:2
+                        rectangle: self.x,self.y,self.width,self.height
+            MyButtons:
+            #home
+                id: home_goods_store
+                name: "home_goods_store"
+                background_normal: "images/home_logo.jpg"
+                on_press:
+                    self.inside_count("images/home_logo.jpg","images/home_logo_down.png")
+                    self.overwrite_id("home_goods_store")
+                canvas.before:
+                    Color:
+                        rgb: utils.get_color_from_hex("#BEC6C3")
+                    Line:
+                        width:2
+                        rectangle: self.x,self.y,self.width,self.height
+        MyButtons:
+            text:"Submit :)"
+            pos_hint:{'bottom':1,'right':1}
+            size_hint:.5,.1
+            on_release:
+                root.submit_all()
+                app.load_shop_screen()
+
+        MyButtons:
+            text:"Show previous searches"
+            pos_hint: {'bottom':1,'left':1}
+            size_hint: .5,.1
+            on_press:
+                app.change_screen('history_screen')

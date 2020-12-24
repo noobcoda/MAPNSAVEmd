@@ -1,0 +1,8 @@
+#:import MapView kivy.garden.mapview.MapView
+
+<ShopMapScreen>:
+    lat: 51.553538
+    lon: -0.259801
+    zoom: 10
+    on_zoom:
+        self.zoom = 10 if self.zoom < 10 else self.zoom

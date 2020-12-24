@@ -1,0 +1,59 @@
+#: import utils kivy.utils
+
+<SignUpScreen>:
+    name: "sign_up"
+    MDScreen:
+        MDCard:
+            orientation: "vertical"
+            size_hint: None,None
+            size: 400,500
+            pos_hint: {"center_x":.5,"center_y":.5}
+            canvas:
+                Color:
+                    rgb: utils.get_color_from_hex("#BEC6C3")
+            elevation: 15
+            padding: 20
+            spacing: 14
+
+            MDLabel:
+                text: "SIGN UP!"
+                font_style: "Button"
+                text_size: self.size
+                font_size: 25
+                bold: True
+                padding_y: 20
+
+            MDTextFieldRound:
+                id: email
+                hint_text: "Email"
+                size_hint_x: None
+                width: 280
+                pos_hint: {'center_x':.5}
+                font_size: 20
+                color_active: [1,1,1,1]
+
+            MDTextFieldRound:
+                id: username_new
+                hint_text: "Username"
+                size_hint_x: None
+                width: 280
+                pos_hint: {'center_x':.5}
+                font_size: 20
+                color_active: [1,1,1,1]
+
+            MDTextFieldRound:
+                id: password_new
+                hint_text: "Password"
+                password: True
+                size_hint_x: None
+                width: 280
+                pos_hint: {'center_x':.5}
+                font_size: 20
+                color_active: [1,1,1,1]
+
+            MDFillRoundFlatButton:
+                id: submit
+                text: "Submit!"
+                pos_hint: {'center_x':.5}
+                on_release:
+                    root.make_new_user()

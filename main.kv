@@ -1,0 +1,28 @@
+#:include kv_files/loginscreen.kv
+#:include kv_files/signupscreen.kv
+#:include kv_files/homescreen.kv
+#:include kv_files/shopscreen.kv
+#:include kv_files/shopmapscreen.kv
+#:include kv_files/historyscreen.kv
+
+
+GridLayout:
+    cols: 1
+    ScreenManager:
+        id: screen_manager
+        LoginScreen:
+            id: login_screen
+        SignUpScreen:
+            id: sign_up
+        HomeScreen:
+            id: home_screen
+            name: "home"
+        ShopScreen:
+            id: shop_screen
+            name: "shop_screen"
+        ShopMapScreen:
+            id: shop_map_screen
+            name: "shop_map_screen"
+        HistoryScreen:
+            id: history_screen
+            name: "history_screen"

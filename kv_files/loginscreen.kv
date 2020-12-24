@@ -1,0 +1,60 @@
+#:import utils kivy.utils
+
+<LoginScreen>:
+    name: "login"
+
+    MDCard:
+        orientation: 'vertical'
+        size_hint: [.8,.7]
+        pos_hint: {'center_x':.5,'center_y':.5}
+        padding: [15,0,15,0]
+        spacing: 14
+
+        BoxLayout:
+            orientation: 'vertical'
+            MDLabel:
+                text: "map n' save"
+                text_size: self.size
+                font_size: 25
+                bold: True
+
+            MDLabel:
+                text: "LOGIN"
+                text_size: self.size
+                bold: True
+                markup: True
+
+        MDTextField:
+            id: email
+            hint_text: "Email"
+
+        MDTextField:
+            id: username
+            hint_text: "Username"
+
+        MDTextField:
+            id: password
+            hint_text: "Password"
+            password: True
+
+        MDFillRoundFlatButton:
+            id: log_in
+            text: "Log In"
+            size_hint_x: .8
+            pos_hint: {'center_x':.5}
+            on_release:
+                if root.authenticate_person(): \
+                app.change_screen("home")
+
+        MDRectangleFlatButton:
+            id: sign_up
+            text: "Sign Up"
+            pos_hint: {'center_x':.5}
+            on_release:
+                app.change_screen("sign_up")
+
+<BackgroundLayer@BoxLayout>:
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex("#8A2BE2")

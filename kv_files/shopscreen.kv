@@ -1,0 +1,12 @@
+<ShopScreen>:
+    ScrollView:
+        pos_hint: {"top":1,"left":1}
+        size_hint: 1,1
+        GridLayout:
+            id: ProductGrid
+            cols: 1
+            spacing: 5,5
+            size_hint_y: None
+            height: self.minimum_height
+            row_default_height:"200dp"
+            row_force_default: True

@@ -1,0 +1,12 @@
+#:import utils kivy.utils
+
+<HistoryScreen>:
+    ScrollView:
+        MDList:
+            id: info_list
+    MDFillRoundFlatButton:
+        text: "Go Back"
+        size_hint_x: .3
+        pos_hint: {'center_x':.5,'top':1}
+        on_press:
+            app.change_screen("home")
