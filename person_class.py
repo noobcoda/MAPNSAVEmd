@@ -32,7 +32,7 @@ class User:
         self.productType = None
 
     def getObs(self):
-        places_result = gmaps.places_nearby(location="%s,%s" % (self.uLat, self.uLong), radius=500) #radius to be set to 2500
+        places_result = gmaps.places_nearby(location="%s,%s" % (self.uLat, self.uLong), radius=500)
 
         placeDict = {'Latitude': [], 'Longitude': [], 'Radius': [], 'Categories': [], 'Name': []}
 

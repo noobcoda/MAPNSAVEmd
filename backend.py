@@ -6,8 +6,6 @@ from person_class import User
 
 from math import radians, cos, sin, sqrt, atan2
 
-###BACKEND###
-
 class MainInfo:
     def __init__(self):
         self.my_lat = None
@@ -86,16 +84,15 @@ class MainInfo:
                 store = Store(places['Latitude'][index], places['Longitude'][index], places['Categories'][index],
                               places['Name'][index])
 
-                new_priceAndProductDict, new_from_shopList = store.get_product_price(
-                    user.productWish)  # == shop name, not product name
+                new_priceAndProductDict, new_from_shopList = store.get_product_price(user.productWish)  # == shop name, not product name
                 priceAndProductDict.update(new_priceAndProductDict)
+                Calculation.toBeSortedListPrices = []
                 Calculation.add_to_be_sorted(priceAndProductDict, store)
 
             elif obstacle_index > len(places['Latitude']) and success_count == 0:
                 print("Unable to find any products near you.")
                 return False
 
-        return
 
     def find_top_stores(self):
         toBeSortedList = Calculation.getFinalList()  # (('tesco biscuit',1.00,<store obj>))

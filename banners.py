@@ -56,6 +56,8 @@ class ProductBanner(GridLayout):
         right.add_widget(right_text)
         self.add_widget(right)
 
+        self.add_widget(kwargs['my_button'])
+
     def update_rect(self,*args):
         self.rect.pos = self.pos
         self.rect.size= self.size

@@ -6,20 +6,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 PATH = "C:\Program Files (x86)\chromedriver.exe"
-driver = webdriver.Chrome(PATH)
 
 class Prices:
-    productAndPriceDict = {}
 
     def __init__(self,product,shopName):
         self.product = product
         self.shopName = shopName
+        self.productAndPriceDict = {}
 
-    def get_groceries_price(self):
-        self.dict = {'Tesco':"https://www.tesco.com/"} #will add more later
+    def get_groceries_price(self,driver):
+        self.dict = {'Tesco':"https://www.tesco.com/",'Asda':"https://groceries.asda.com/"} #will add more later
         prices = []
         products = []
         from_store = []
+
         if 'Tesco' in self.shopName:
 
             driver.get("%s" % (self.dict['Tesco']))
@@ -41,6 +41,34 @@ class Prices:
                         prices.append(price.text)
                         self.productAndPriceDict["%s" % (nameLabel[index].text)] = price.text
                         from_store.append('Tesco Extra')
+            except:
+                driver.quit()
+
+        elif 'Asda' in self.shopName:
+            driver.get("%s"%(self.dict['Asda']))
+            search = driver.find_element_by_xpath("(//*[@id='search'])")
+            search.send_keys("%s" % self.product)
+            search.send_keys(Keys.RETURN)
+
+            try:
+                main = WebDriverWait(driver, 10).until(
+                    EC.presence_of_all_elements_located((By.XPATH, "//strong[@class='co-product__price']")))
+
+                nameLabel = driver.find_elements_by_xpath("//a[@class='co-product__anchor']")
+
+                count = 0
+                for index, price in enumerate(main):
+                    if nameLabel[index].text in products:
+                        break
+                    elif count > 20:  # just want to scrape 20
+                        break
+                    else:
+                        count += 1
+                        products.append(nameLabel[index].text)
+                        prices.append(price.text)
+                        self.productAndPriceDict["%s" % (nameLabel[index].text)] = price.text
+                        from_store.append("Asda")
+
             except:
                 driver.quit()
 
@@ -66,7 +94,7 @@ class Store:
     def get_product_price(self, productName):
         Price = Prices(productName, self.store_name)
         if "supermarket" in self.category:
-            pricesWithProductsDict, shopName = Price.get_groceries_price()
+            pricesWithProductsDict, shopName = Price.get_groceries_price(webdriver.Chrome(PATH))
             return pricesWithProductsDict, shopName
 
 class Product(Store):

@@ -7,11 +7,13 @@ db = mysql.connector.connect(
     database="database2"
 )
 
-mycursor=db.cursor()
-mycursor.execute("DROP DATABASE database2")
-mycursor.execute("CREATE DATABASE database2")
+conn = sqlite3.connect("database2")
+c = conn.cursor()
+c.execute("DROP DATABASE database2")
+c.execute("CREATE DATABASE database2")
+conn.commit()
+conn.close()
 '''
-
 def create_all_tables():
     conn = sqlite3.connect("database2")
     c = conn.cursor()
@@ -45,7 +47,7 @@ def create_all_tables():
                         "uLat DECIMAL(65,30),"
                         "uLong DECIMAL(65,30),"
                         "ProductSearch VARCHAR(255),"
-                        "Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,"
+                        "Time DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,"
                         "FOREIGN KEY(UID) REFERENCES Log(LogID)"
                         "FOREIGN KEY(SID) REFERENCES Store(StoreID))")
 
@@ -96,12 +98,6 @@ def check_already_exists(email,username_ask):
     if username_ask == username[0]:
         return True
 
-def get_latest_store_ID():
-    conn = sqlite3.connect("database2")
-    c = conn.cursor()
-
-    return int(c.execute("SELECT last_insert_rowid()").fetchone()[0])
-
 def insert_user_table(logID,stoID,uLat,uLon,product):
     conn = sqlite3.connect("database2")
     c = conn.cursor()
@@ -120,14 +116,18 @@ def insert_to_store(lat,long,name):
     conn.commit()
     conn.close()
 
-def if_is_store_send_id(sLat,sLng,storeName):
+def is_store(sLat,sLng,storeName):
     conn = sqlite3.connect("database2")
     c = conn.cursor()
-
-    if c.execute("SELECT StoreID FROM Store WHERE Store.sLat=? AND Store.sLong=? AND Store.storeName=?",(sLat,sLng,storeName)).fetchone() is None:
+    if len(c.execute("SELECT StoreID FROM Store WHERE Store.sLat=? AND Store.sLong=? AND Store.storeName=?",(sLat,sLng,storeName)).fetchall()) == 0:
         return False
     else:
-        return c.execute("SELECT StoreID FROM Store WHERE Store.sLat=? AND Store.sLong=? AND Store.storeName=?",(sLat,sLng,storeName)).fetchone()[0]
+        return True
+
+def get_store_ID(sLat,sLng,storeName):
+    conn = sqlite3.connect("database2")
+    c = conn.cursor()
+    return int(c.execute("SELECT StoreID FROM Store WHERE Store.sLat=? AND Store.sLong=? AND Store.storeName=?",(sLat,sLng,storeName)).fetchone()[0])
 
 def insert_to_product(storeID,product_name,product_price):
     conn = sqlite3.connect("database2")
@@ -148,7 +148,6 @@ def get_all_locations(logID):
     conn = sqlite3.connect("database2")
     c = conn.cursor()
 
-
     return c.execute("SELECT User.uLat,User.uLong,Store.sLat,Store.sLong "
                     "FROM ((Log "
                     "INNER JOIN User ON Log.LogID = User.UID)"
@@ -161,14 +160,18 @@ def show_user_history(logID):
     conn = sqlite3.connect("database2")
     c = conn.cursor()
 
-    return c.execute("SELECT User.Time,Store.storeName,Product.productName,Product.productPrice "
+    print("RESULTS ",c.execute("SELECT distinct User.Time,Store.storeName,Product.productName,Product.productPrice "
                      "FROM (((Log "
                      "INNER JOIN User ON Log.LogID = User.UID)"
                      "INNER JOIN Store ON User.SID = Store.StoreID)"
                      "INNER JOIN Product ON Product.StoID = Store.StoreID)"
                      "WHERE Log.LogID=? "
-                     "AND User.Time NOT NULL "
-                     "AND Store.storeName NOT NULL "
-                     "AND Product.productName NOT NULL "
-                     "AND Product.productPrice NOT NULL "
-                     "ORDER BY 1",(str(logID), )).fetchall()
+                     "ORDER BY Time DESC",(str(logID), )).fetchall())
+
+    return c.execute("SELECT distinct User.Time,Store.storeName,Product.productName,Product.productPrice "
+                     "FROM (((Log "
+                     "INNER JOIN User ON Log.LogID = User.UID)"
+                     "INNER JOIN Store ON User.SID = Store.StoreID)"
+                     "INNER JOIN Product ON Product.StoID = Store.StoreID)"
+                     "WHERE Log.LogID=? "
+                     "ORDER BY Time DESC",(str(logID), )).fetchall()

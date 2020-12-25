@@ -1,7 +1,6 @@
 #kivy modules
 from kivymd.app import MDApp,App
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.tab import MDTabsBase
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 from kivy.properties import ObjectProperty
@@ -9,7 +8,6 @@ from kivy.uix.button import Button
 from kivy_garden.mapview import MapView, MapMarkerPopup
 from kivymd.uix.button import MDRoundFlatIconButton
 from kivymd.uix.list import ThreeLineListItem
-from kivy.uix.floatlayout import FloatLayout
 
 #APIs
 import urllib.request
@@ -28,14 +26,6 @@ from GPS import GPSHelper
 #other
 import json
 from functools import partial
-
-
-####RUN CODE THE VERY FIRST TIME YOU DOWNLOAD THIS CODE!!###
-#hashtable=first_time_run()
-
-##otherwise:##
-#hashtable = other_time_run()
-#print("HASHTABLE: ",hashtable)
 
 ###FRONTEND###
 
@@ -69,7 +59,6 @@ class SignUpScreen(Screen):
             App.get_running_app().root.ids["screen_manager"].current = "home"
 
 
-
 class LoginScreen(Screen):
     def authenticate_person(self):
         print(database.see_all_tables())
@@ -93,6 +82,7 @@ class HomeScreen(Screen):
         self.ids.product_name.text = ""
         MainInfo.p_category = None
         MainInfo.p_name = None
+        MainInfo.finalists = []
 
         # reset all button images
         self.ids["supermarket"].background_normal = "images/supermarket_logo.jpg"
@@ -106,16 +96,21 @@ class HomeScreen(Screen):
 
 class HistoryScreen(Screen):
     def on_enter(self,*args):
+        print("ALL: ",database.see_all_tables())
         results = database.show_user_history(MainInfo.person_id)
+
         for each in results:
-            items = ThreeLineListItem(text="%s"%(str(each[0])),secondary_text="Product: %s"%(str(each[1])),tertiary_text="%s"%(str(each[3])))
-            self.add_widget(items)
+            item = ThreeLineListItem(text="%s" % (str(each[0])), secondary_text="Product: %s" % (str(each[2])),
+                                     tertiary_text="%s" % (str(each[1])))
+            self.ids["info_list"].add_widget(item)
 
 class ShopScreen(Screen):
     pass
 
 class ShopMapScreen(Screen):
     def on_enter(self, *args):
+
+        print("ALL DATABASES: ",database.see_all_tables())
 
         #ACCESSING DATABASE
         loci = database.get_all_locations(MainInfo.person_id)
@@ -183,13 +178,14 @@ class ShopMapScreen(Screen):
             self.map.add_widget(m)
 
         btn = MDRoundFlatIconButton(text="Go to Home") #next time change to sign out
-        btn.bind(on_press=lambda x:self.change_to_home())
+        btn.bind(on_press=lambda x:self.change_screen("home"))
         self.map.add_widget(btn)
 
         return self.map
 
-    def change_to_home(self):
-        App.get_running_app().root.ids["screen_manager"].current = "home"
+    def change_screen(self,name):
+        App.get_running_app().root.ids["screen_manager"].current = name
+
 
 class MapMarker(MapMarkerPopup):
     def get_node(self,current_node):
@@ -239,23 +235,30 @@ class MainApp(MDApp):
 
     def load_shop_screen(self):
 
+        ##clearing all the grids before
+        banner_grid = self.root.ids["shop_screen"].ids["ProductGrid"]
+        banner_grid.clear_widgets()
+
         self.finalists = MainInfo.start()
+
+        #if self.finalists is empty:
+        if len(self.finalists) == 0:
+            print("NO SUCH PRODUCT!!")
+            self.change_screen("home")
 
         hex_colours = ["#BEC6C3", "#FCDFCE", "#E0D7D3", "#8A7D80", "#626670"]
 
-        banner_grid = self.root.ids["shop_screen"].ids["ProductGrid"]
+        #banner_grid = self.root.ids["shop_screen"].ids["ProductGrid"]
 
-        for count in range(5):
+        for count in range(len(self.finalists)):
+            btn = Button(text="Choose me!", size_hint=(1, 1), pos_hint={"top": .5, "right": 1})
+            btn.bind(on_press=partial(self.load_map_screen, count))
+
             #populate grid in shopscreen
 
             PBanner = ProductBanner(shop=str(self.finalists[count][0]), product=str(self.finalists[count][1]),
                                     price=str(self.finalists[count][2]),distance=str(self.finalists[count][3]),time=str(self.finalists[count][4]),
-                                    colour=hex_colours[count])
-
-            self.buttons.append(Button(text="Choose me!",size_hint=(1,1),pos_hint={"top":.5,"right":1}))
-
-            PBanner.add_widget(self.buttons[count])
-            self.buttons[count].bind(on_press=partial(self.load_map_screen, count))
+                                    colour=hex_colours[count],my_button=btn)
 
             banner_grid.add_widget(PBanner)
 
@@ -272,11 +275,11 @@ class MainApp(MDApp):
         productPrice = self.finalists[index][2]
 
         #check if store already exists in database (we don't want any repeats)
-        if database.if_is_store_send_id(bLat, bLon, storeName) == False:
+
+        if database.is_store(bLat, bLon, storeName) == False:
             database.insert_to_store(bLat, bLon, storeName)
-            storeID = database.get_latest_store_ID()
-        else:
-            storeID = database.if_is_store_send_id(bLat, bLon, storeName)
+
+        storeID = database.get_store_ID(bLat,bLon,storeName)
 
         database.insert_to_product(storeID, productName, productPrice)
 
@@ -289,9 +292,6 @@ class MainApp(MDApp):
         ######CHECK#####
         print("DATABASES", database.see_all_tables())
 
-MainApp().run()
-
-# update hashtable
-#update_hashtable(hashtable)
 MainInfo.clear()
-#database.reset()
+database.reset()
+MainApp().run()

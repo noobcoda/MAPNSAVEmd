@@ -106,3 +106,9 @@
             size_hint: .5,.1
             on_press:
                 app.change_screen('history_screen')
+
+        MDRoundFlatIconButton:
+            text: "Logout"
+            pos_hint: {'top':1,'center_x':.5}
+            on_press:
+                app.change_screen('login')
