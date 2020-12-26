@@ -6,6 +6,8 @@ from kivy.uix.screenmanager import Screen
 from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy_garden.mapview import MapView, MapMarkerPopup
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 from kivymd.uix.button import MDRoundFlatIconButton
 from kivymd.uix.list import ThreeLineListItem
 
@@ -226,6 +228,9 @@ class MainApp(MDApp):
         screen_manager = self.root.ids['screen_manager']
         screen_manager.current = screen_name
 
+    def change_to_home(self,*args):
+        self.change_screen("home")
+
     def on_start(self):
         #my_lat,my_lon = GPSHelper.run()
         my_lat = 51.553538
@@ -244,11 +249,11 @@ class MainApp(MDApp):
         #if self.finalists is empty:
         if len(self.finalists) == 0:
             print("NO SUCH PRODUCT!!")
-            self.change_screen("home")
+            popup = Popup(title="Error!",content=Label(text="We couldn't find any results near you :("),size_hint=[.5,.3])
+            popup.bind(on_dismiss=self.change_to_home)
+            popup.open()
 
         hex_colours = ["#BEC6C3", "#FCDFCE", "#E0D7D3", "#8A7D80", "#626670"]
-
-        #banner_grid = self.root.ids["shop_screen"].ids["ProductGrid"]
 
         for count in range(len(self.finalists)):
             btn = Button(text="Choose me!", size_hint=(1, 1), pos_hint={"top": .5, "right": 1})

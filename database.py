@@ -47,7 +47,7 @@ def create_all_tables():
                         "uLat DECIMAL(65,30),"
                         "uLong DECIMAL(65,30),"
                         "ProductSearch VARCHAR(255),"
-                        "Time DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,"
+                        "Time DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
                         "FOREIGN KEY(UID) REFERENCES Log(LogID)"
                         "FOREIGN KEY(SID) REFERENCES Store(StoreID))")
 

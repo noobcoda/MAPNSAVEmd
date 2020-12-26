@@ -24,23 +24,4 @@ class HashTable:
         #now traverse the linked list
         return self.hashList[search_index].find_hash(new_hash_result)
 
-'''
-def first_time_run():
-    new_hashtable = HashTable()
-    pickle_out = open("hashtable.pickle", "wb")
-    pickle.dump(new_hashtable, pickle_out)
-    pickle_out.close()
-    return new_hashtable
-
-def other_time_run():
-    pickle_in = open("hashtable.pickle", "rb")
-    hashtable = pickle.load(pickle_in)
-    return hashtable
-
-def update_hashtable(hashtable):
-    pickle_out = open("hashtable.pickle", "wb")
-    pickle.dump(hashtable, pickle_out)
-    pickle_out.close()
-'''
-
 hashtable = HashTable()
