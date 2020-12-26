@@ -250,7 +250,7 @@ class MainApp(MDApp):
         self.finalists = MainInfo.start()
 
         #if self.finalists is empty:
-        if len(self.finalists) == 0:
+        if len(self.finalists) == False:
             popup = Popup(title="Error!",content=Label(text="We couldn't find any results near you :("),size_hint=[.5,.3])
             popup.bind(on_dismiss=self.change_to_home)
             popup.open()
