@@ -28,10 +28,12 @@ class GpsHelper():
             from plyer import gps
             gps.configure(on_location=self.on_gps_location,
                           on_status=self.on_auth_status) #whenever new location is received
-            gps.start(minTime=100000000000000000000,minDistance=10000000000000000) #I'm only getting new location after a very long period of time, as there's no need to keep calling this function. We mainly just want the start location.
+            gps.start(minTime=100000000000000000000,minDistance=10000000000000000)
+            #I'm only getting new location after a very long period of time,
+            # as there's no need to keep calling this function. We mainly just want the start location.
 
 
-    def on_gps_location(self,*args,**kwargs): #kwargs gets you all the key stuff -- lat and long
+    def on_gps_location(self,*args,**kwargs):
         self.count += 1
         my_lat = kwargs['lat']
         my_lon = kwargs['lon']
