@@ -32,7 +32,6 @@ class LinkedList:
 
     def find_hash(self,value):
         if self.head == None:
-            print("User not found!")
             return False
         else:
             current_node = self.head

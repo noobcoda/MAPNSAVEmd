@@ -37,45 +37,50 @@ class SignUpScreen(Screen):
         username = self.ids.username_new.text
         password = self.ids.password_new.text
 
-        #check if person exists
-        result = database.check_already_exists(email,username)
+        #check if email is in correct format
+        if self.check_email(email) == True:
 
-        if result == 1:
-            hashtable.insert(PersonHashSymbol(email,username,password))
-            #add to database
-            database.insert_into_log_table(email, username)
-            print("Added to database successfully!")
-            MainInfo.person_id = database.get_person_ID(email, username)
-            App.get_running_app().root.ids["screen_manager"].current = "home"
+            #check if person exists
+            result = database.check_already_exists(email,username)
 
-        elif result == 2:
-            print("Email already taken!")
-            print("DATABASES", database.see_all_tables())
-            self.ids.email.text = ""
-            self.ids.username_new.text=""
-            self.ids.password_new.text=""
+            if result == 1:
+                hashtable.insert(PersonHashSymbol(email,username,password))
+                #add to database
+                database.insert_into_log_table(email, username)
+                MainInfo.person_id = database.get_person_ID(email, username)
+                App.get_running_app().root.ids["screen_manager"].current = "home"
 
-        elif result == True:
-            hashtable.search(PersonHashSymbol(email,username,password))
-            print("You already exist!")
-            App.get_running_app().root.ids["screen_manager"].current = "home"
+            elif result == 2:
+                popup = MDDialog(title="Error!", text="Sorry, email is taken!")
+                popup.open()
 
+            elif result == True:
+                hashtable.search(PersonHashSymbol(email,username,password))
+                #goes straight to home page, as they already exist.
+                App.get_running_app().root.ids["screen_manager"].current = "home"
+
+
+    def check_email(self,email):
+        if '@' not in email and '.com' not in email:
+            popup = MDDialog(title="Error!",text="Sorry, email is not valid!")
+            popup.open()
+            return False
+        return True
 
 class LoginScreen(Screen):
+
     def authenticate_person(self):
-        print(database.see_all_tables())
         email = self.ids.email.text
         username = self.ids.username.text
         given_password = self.ids.password.text
 
         if hashtable.search(PersonHashSymbol(email,username,given_password)) is True:
             MainInfo.person_id = database.get_person_ID(email, username)
-            print("SUCCESS!")
             return True
         else:
-            print("Sorry, you don't exist!")
+            popup = MDDialog(title="Error!",text="Sorry, you don't exist!")
+            popup.open()
             App.get_running_app().root.ids["screen_manager"].current = "sign_up"
-            MainApp.get_running_app().stop()
 
 class HomeScreen(Screen):
     product_name = ObjectProperty(None)
@@ -98,7 +103,7 @@ class HomeScreen(Screen):
 
 class HistoryScreen(Screen):
     def on_enter(self,*args):
-        print("ALL: ",database.see_all_tables())
+
         results = database.show_user_history(MainInfo.person_id)
 
         for each in results:
@@ -111,8 +116,6 @@ class ShopScreen(Screen):
 
 class ShopMapScreen(Screen):
     def on_enter(self, *args):
-
-        print("ALL DATABASES: ",database.see_all_tables())
 
         #ACCESSING DATABASE
         loci = database.get_all_locations(MainInfo.person_id)
@@ -248,7 +251,6 @@ class MainApp(MDApp):
 
         #if self.finalists is empty:
         if len(self.finalists) == 0:
-            print("NO SUCH PRODUCT!!")
             popup = Popup(title="Error!",content=Label(text="We couldn't find any results near you :("),size_hint=[.5,.3])
             popup.bind(on_dismiss=self.change_to_home)
             popup.open()
@@ -293,9 +295,6 @@ class MainApp(MDApp):
 
         #switch screens
         self.change_screen("shop_map_screen")
-
-        ######CHECK#####
-        print("DATABASES", database.see_all_tables())
 
 MainInfo.clear()
 database.reset()

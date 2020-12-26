@@ -1,8 +1,6 @@
 from mylinkedlist import LinkedList
 from person_class import PersonNode
 
-import pickle #without this, hashtable gets instantiated whenever app restarts, and we lose all previous data
-
 class HashTable:
 
     def __init__(self):
@@ -13,7 +11,6 @@ class HashTable:
         index = self.get_index_pos(hash_result)
         person = PersonNode(hash_result)
         self.hashList[index].append(person) #adds the hash value to the linkedlist
-        print(self.hashList[index])
 
     def get_index_pos(self,hash_result):
         return hash_result % 10

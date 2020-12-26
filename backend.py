@@ -21,7 +21,6 @@ class MainInfo:
             return self.finalists
         else:
             print("Failed to run any operations.")
-            print("DIS: ",self.my_lat,self.my_lon,self.p_category,self.p_name,self.person_id)
             return False
 
     def main_body(self):

@@ -1,4 +1,3 @@
-from kivymd.app import MDApp,App
 from kivy.utils import platform
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout

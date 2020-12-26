@@ -1,6 +1,5 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.button import Button, ButtonBehavior
 from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle
 import kivy.utils

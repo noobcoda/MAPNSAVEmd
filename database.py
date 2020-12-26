@@ -160,14 +160,6 @@ def show_user_history(logID):
     conn = sqlite3.connect("database2")
     c = conn.cursor()
 
-    print("RESULTS ",c.execute("SELECT distinct User.Time,Store.storeName,Product.productName,Product.productPrice "
-                     "FROM (((Log "
-                     "INNER JOIN User ON Log.LogID = User.UID)"
-                     "INNER JOIN Store ON User.SID = Store.StoreID)"
-                     "INNER JOIN Product ON Product.StoID = Store.StoreID)"
-                     "WHERE Log.LogID=? "
-                     "ORDER BY Time DESC",(str(logID), )).fetchall())
-
     return c.execute("SELECT distinct User.Time,Store.storeName,Product.productName,Product.productPrice "
                      "FROM (((Log "
                      "INNER JOIN User ON Log.LogID = User.UID)"

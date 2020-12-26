@@ -89,20 +89,3 @@ class MyPriorityQueue:
             self.queue.append(min_val)
             return self.get_queue(min_val)
 minHeap = MyMinHeap()
-
-'''
-class Obj():
-    def __init__(self,p):
-        self.name = 'groot'
-        self.priority = p
-
-queue = MyPriorityQueue()
-
-queue.insertWithPriority_obj(Obj(500))
-queue.insertWithPriority_obj(Obj(6))
-queue.insertWithPriority_obj(Obj(2))
-queue.insertWithPriority_obj(Obj(99))
-queue.insertWithPriority_obj(Obj(1))
-
-queue.get_queue(0)
-'''
