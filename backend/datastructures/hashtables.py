@@ -1,5 +1,5 @@
-from mylinkedlist import LinkedList
-from person_class import PersonNode
+from backend.datastructures.mylinkedlist import LinkedList
+from backend.person_class import PersonNode
 
 class HashTable:
 
@@ -20,5 +20,3 @@ class HashTable:
         search_index = self.get_index_pos(new_hash_result)
         #now traverse the linked list
         return self.hashList[search_index].find_hash(new_hash_result)
-
-hashtable = HashTable()

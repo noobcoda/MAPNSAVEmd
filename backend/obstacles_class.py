@@ -12,13 +12,13 @@ class Prices:
     def __init__(self,product,shopName):
         self.product = product
         self.shopName = shopName
-        self.productAndPriceDict = {}
 
     def get_groceries_price(self,driver):
         self.dict = {'Tesco':"https://www.tesco.com/",'Asda':"https://groceries.asda.com/"} #will add more later
         prices = []
         products = []
         from_store = []
+        self.productAndPriceDict = {}
 
         if 'Tesco' in self.shopName:
 
@@ -33,6 +33,7 @@ class Prices:
                     EC.presence_of_all_elements_located((By.XPATH, "//span[@class='value']"))
                 )
                 nameLabel = driver.find_elements_by_xpath("//a[@data-auto='product-tile--title']")
+
                 for index, price in enumerate(main):
                     if nameLabel[index].text in products: #prevent any repeats
                         pass

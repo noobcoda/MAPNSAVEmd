@@ -13,21 +13,26 @@ from kivymd.uix.list import ThreeLineListItem
 
 #APIs
 import urllib.request
-from my_keys import DIRECTIONS_KEY
-
-#files
-from hashtables import hashtable
-import database
-from person_class import PersonHashSymbol
-from banners import ProductBanner
-from directions import DirectionNode
-from mylinkedlist import LinkedList
-from backend import MainInfo
-from GPS import GPSHelper
+from backend.my_keys import DIRECTIONS_KEY
 
 #other
 import json
 from functools import partial
+import os.path
+
+#files
+from backend.utility import utility
+if os.path.isfile("hashtablefile"):
+    hashtable = utility.load_hashtable("hashtablefile",False)
+else:
+    hashtable = utility.load_hashtable("hashtablefile",True)
+
+from backend.databases import database
+from backend.person_class import PersonHashSymbol
+from backend.banners import ProductBanner
+from backend.GPSanddirections.directions import DirectionNode
+from backend.datastructures.mylinkedlist import LinkedList
+from backend.backend import MainInfo
 
 ###FRONTEND###
 
@@ -41,10 +46,11 @@ class SignUpScreen(Screen):
         if self.check_email(email) == True:
 
             #check if person exists
-            result = database.check_already_exists(email,username)
+            result = database.check_already_exists(email, username)
 
             if result == 1:
                 hashtable.insert(PersonHashSymbol(email,username,password))
+                utility.save_hash_table(hashtable,"hashtablefile")
                 #add to database
                 database.insert_into_log_table(email, username)
                 MainInfo.person_id = database.get_person_ID(email, username)
@@ -286,7 +292,7 @@ class MainApp(MDApp):
         if database.is_store(bLat, bLon, storeName) == False:
             database.insert_to_store(bLat, bLon, storeName)
 
-        storeID = database.get_store_ID(bLat,bLon,storeName)
+        storeID = database.get_store_ID(bLat, bLon, storeName)
 
         database.insert_to_product(storeID, productName, productPrice)
 
@@ -296,6 +302,6 @@ class MainApp(MDApp):
         #switch screens
         self.change_screen("shop_map_screen")
 
+
 MainInfo.clear()
-database.reset()
 MainApp().run()

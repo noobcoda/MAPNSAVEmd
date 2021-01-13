@@ -1,5 +1,5 @@
 import googlemaps
-from my_keys import KEY
+from backend.my_keys import KEY
 gmaps = googlemaps.Client(key=KEY)
 
 

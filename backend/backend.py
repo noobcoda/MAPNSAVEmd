@@ -1,8 +1,8 @@
 #####BACKEND#####
-from priorityqueue import MyPriorityQueue
-from obstacles_class import Store, Product
-from calculations_class import Calculation
-from person_class import User
+from backend.datastructures.priorityqueue import MyPriorityQueue
+from backend.obstacles_class import Store, Product
+from backend.calculations_class import Calculation
+from backend.person_class import User
 
 from math import radians, cos, sin, sqrt, atan2
 
@@ -62,11 +62,12 @@ class MainInfo:
 
         return ans_m
 
-    def calculate_priority(self, price, distance):
-        return price + distance
+    def calculate_priority(self, price, distance): #distance should not be weighted as much as price, as made sure all stores are in a 500m radius anyway
+        return price + distance/1000
 
     def get_info_near_you(self, user):
         priceAndProductDict = {}
+        from_shopList = []
 
         # getting things near user
         places = user.getObs()
@@ -85,6 +86,7 @@ class MainInfo:
 
                 new_priceAndProductDict, new_from_shopList = store.get_product_price(user.productWish)  # == shop name, not product name
                 priceAndProductDict.update(new_priceAndProductDict)
+                from_shopList += new_from_shopList
                 Calculation.toBeSortedListPrices = []
                 Calculation.add_to_be_sorted(priceAndProductDict, store)
 
