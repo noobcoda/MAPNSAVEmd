@@ -235,9 +235,9 @@ class MainApp(MDApp):
         self.change_screen("home")
 
     def on_start(self):
-        my_lat,my_lon = GPSHelper.run()
-        #my_lat = 51.553538
-        #my_lon = -0.259801
+        #my_lat,my_lon = GPSHelper.run()
+        my_lat = 51.553538
+        my_lon = -0.259801
         MainInfo.my_lat = my_lat
         MainInfo.my_lon = my_lon
 

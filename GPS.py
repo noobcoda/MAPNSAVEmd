@@ -38,8 +38,8 @@ class GpsHelper():
         my_lat = kwargs['lat']
         my_lon = kwargs['lon']
 
-        #my_lat = 51.553538
-        #my_lon = -0.259801
+        my_lat = 51.553538
+        my_lon = -0.259801
 
         print("GPS POS:",my_lat,my_lon)
         if self.count == 1: #if this is the first time

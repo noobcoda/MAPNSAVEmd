@@ -27,22 +27,22 @@ class ProductBanner(GridLayout):
 
         #leftest
         top = FloatLayout()
-        top_text = WrappedLabel(text=kwargs['product'],font_size=15,size_hint=(1,1),pos_hint={"top":1}) #width,height for size
+        top_text = WrappedLabel(text=kwargs['product'],color=[0,0,0,1],font_size=15,size_hint=(1,1),pos_hint={"top":1}) #width,height for size
         top.add_widget(top_text)
         self.add_widget(top)
 
         #left
         left = FloatLayout()
         left_img = Image(source="images/store_logo.png",size_hint=(1,0.8),pos_hint={"top":1,"right":1})
-        left_text = WrappedLabel(text=kwargs['shop'],size_hint=(1,.2),pos_hint={"top":.2,"right":1})
+        left_text = WrappedLabel(text=kwargs['shop'],color=[0,0,0,1],size_hint=(1,.2),pos_hint={"top":.2,"right":1})
         left.add_widget(left_img)
         left.add_widget(left_text)
         self.add_widget(left)
 
         #mid
         mid = FloatLayout()
-        mid_text1 = WrappedLabel(text="Avg Dist: "+str(kwargs['distance'])+'m',size_hint=(1,0.8),pos_hint={"top":1,"right":1})
-        mid_text2 = WrappedLabel(text="Avg Walk Time: "+str(kwargs['time'])+"mins",size_hint=(1,.2),pos_hint={"top":.2,"right":1})
+        mid_text1 = WrappedLabel(text="Avg Dist: "+str(kwargs['distance'])+'m',color=[0,0,0,1],size_hint=(1,0.8),pos_hint={"top":1,"right":1})
+        mid_text2 = WrappedLabel(text="Avg Walk Time: "+str(kwargs['time'])+"mins",color=[0,0,0,1],size_hint=(1,.2),pos_hint={"top":.2,"right":1})
         mid.add_widget(mid_text1)
         mid.add_widget(mid_text2)
         self.add_widget(mid)
@@ -50,7 +50,7 @@ class ProductBanner(GridLayout):
         #right
         right = FloatLayout()
         right_img = Image(source="images/pound.png",size_hint=(1,0.8),pos_hint={"top":1,"right":1})
-        right_text = WrappedLabel(text="Price: £"+str(kwargs['price']),size_hint=(1,.2),pos_hint={"top":.2,"right":1})
+        right_text = WrappedLabel(text="Price: £"+str(kwargs['price']),color=[0,0,0,1],size_hint=(1,.2),pos_hint={"top":.2,"right":1})
         right.add_widget(right_img)
         right.add_widget(right_text)
         self.add_widget(right)
