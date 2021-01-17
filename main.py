@@ -167,7 +167,7 @@ class ShopMapScreen(Screen):
             dir_node = DirectionNode(node_from_lat, node_from_lon)
             dir_node.eLat = node_to_lat
             dir_node.eLon = node_to_lon
-            dir_node.instructions = node_instructions
+            dir_node.instructions = dir_node.get_rid_of_html_tags(node_instructions)
 
             dir_node.number = number
             number += 1
