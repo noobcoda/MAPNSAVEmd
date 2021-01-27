@@ -30,16 +30,16 @@ class LinkedList:
     def get_size(self):
         return self.size
 
-    def find_hash(self,value):
+    def find_hash(self,key_value):
         if self.head == None:
-            return False
+            return False,False
         else:
             current_node = self.head
-            if current_node.hash == value:
-                return True
+            if current_node.key == key_value:
+                return True,current_node
 
             while current_node.next != None:
-                if current_node.hash == value:
+                if current_node.key == key_value:
                     return True
                 current_node = current_node.next
-            return False
+            return False,False

@@ -2,7 +2,6 @@
 from backend.datastructures.priorityqueue import MyPriorityQueue
 from backend.obstacles_class import Store, Product
 from backend.calculations_class import Calculation
-from backend.person_class import User
 
 from math import radians, cos, sin, sqrt, atan2
 
@@ -10,25 +9,20 @@ class MainInfo:
     def __init__(self):
         self.my_lat = None
         self.my_lon = None
-        self.p_category = None
-        self.p_name = None
         self.finalists = []
-        self.person_id = None
+        self.user = None
 
     def start(self):
-        if self.person_id is not None and self.my_lat is not None and self.my_lon is not None and self.p_category is not None and self.p_name is not None:
-            self.main_body()
+        if self.user.productWish is not None and self.user.productType is not None and self.my_lat is not None and self.my_lon is not None:
+            self.user.uLat = self.my_lat
+            self.user.uLong = self.my_lon
+            self.main_body(self.user)
             return self.finalists
         else:
             print("Failed to run any operations.")
             return False
 
-    def main_body(self):
-        # initialise user
-        user = User(self.my_lat, self.my_lon)
-        user.productType = self.p_category
-        user.productWish = self.p_name
-
+    def main_body(self,user):
         self.get_info_near_you(user)
 
         # now that we have the finished priceandproductdict, we must collect the list & begin mergesort
@@ -131,9 +125,6 @@ class MainInfo:
     def clear(self):
         self.my_lat = None
         self.my_lon = None
-        self.p_category = None
-        self.p_name = None
         self.finalists = []
-        self.person_id = None
 
 MainInfo = MainInfo()

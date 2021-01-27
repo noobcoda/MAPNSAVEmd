@@ -1,25 +1,21 @@
 import sqlite3
-'''
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="root",
-    database="database2"
-)
 
-conn = sqlite3.connect("database2")
-c = conn.cursor()
-c.execute("DROP DATABASE database2")
-c.execute("CREATE DATABASE database2")
+conn = sqlite3.connect("database3.db")
+c=conn.cursor()
 conn.commit()
 conn.close()
-'''
+
 def create_all_tables():
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     #log table
-    c.execute("CREATE TABLE IF NOT EXISTS Log(LogID INTEGER PRIMARY KEY AUTOINCREMENT,Email VARCHAR(255),Username VARCHAR(50))")
+    c.execute("CREATE TABLE IF NOT EXISTS Log"
+              "("
+              "LogID INTEGER PRIMARY KEY AUTOINCREMENT,"
+              "Email VARCHAR(255),"
+              "Username VARCHAR(50),"
+              "Salt INTEGER NOT NULL)")
 
     #store table
     c.execute("CREATE TABLE IF NOT EXISTS Store"
@@ -47,7 +43,7 @@ def create_all_tables():
                         "uLat DECIMAL(65,30),"
                         "uLong DECIMAL(65,30),"
                         "ProductSearch VARCHAR(255),"
-                        "Time DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
+                        "Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,"
                         "FOREIGN KEY(UID) REFERENCES Log(LogID)"
                         "FOREIGN KEY(SID) REFERENCES Store(StoreID))")
 
@@ -55,13 +51,13 @@ def create_all_tables():
     conn.close()
 
 def see_all_tables():
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     return c.execute("SELECT * FROM Log").fetchall(),c.execute("SELECT * FROM User").fetchall(),c.execute("SELECT * FROM Store").fetchall(),c.execute("SELECT * FROM Product").fetchall()
 
 def reset():
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     c.execute("DROP TABLE IF EXISTS Product")
@@ -70,23 +66,31 @@ def reset():
     c.execute("DROP TABLE IF EXISTS User")
     create_all_tables()
 
-def insert_into_log_table(email,username):
-    conn = sqlite3.connect("database2")
+def insert_into_log_table(email,username,salt):
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
-    c.execute("INSERT INTO Log(Email,Username) VALUES(?,?)",(email,username))
+    c.execute("INSERT INTO Log(Email,Username,Salt) VALUES(?,?,?)",(email,username,salt))
     c.execute("SELECT * FROM Log")
 
     conn.commit()
     conn.close()
 
 def get_person_ID(email,username):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
     return int(c.execute("SELECT LogID FROM Log WHERE Email=? AND Username=? LIMIT 1",(email,username)).fetchone()[0])
 
+def get_salt(email):
+    conn=sqlite3.connect("database3.db")
+    c = conn.cursor()
+
+    salt = c.execute("SELECT Salt FROM Log WHERE Email=?",(email,)).fetchone()[0]
+
+    return salt
+
 def check_already_exists(email,username_ask):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     username = c.execute("SELECT Username FROM Log WHERE Email=?",(email,)).fetchall()
@@ -99,7 +103,7 @@ def check_already_exists(email,username_ask):
         return True
 
 def insert_user_table(logID,stoID,uLat,uLon,product):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     c.execute("INSERT INTO User(UID,SID,uLat,uLong,ProductSearch) VALUES(?,?,?,?,?)",(str(logID),str(stoID),uLat,uLon,product))
@@ -108,7 +112,7 @@ def insert_user_table(logID,stoID,uLat,uLon,product):
     conn.close()
 
 def insert_to_store(lat,long,name):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     c.execute("INSERT INTO Store(sLat,sLong,storeName) VALUES(?,?,?)", (lat,long,name))
@@ -117,7 +121,7 @@ def insert_to_store(lat,long,name):
     conn.close()
 
 def is_store(sLat,sLng,storeName):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
     if len(c.execute("SELECT StoreID FROM Store WHERE Store.sLat=? AND Store.sLong=? AND Store.storeName=?",(sLat,sLng,storeName)).fetchall()) == 0:
         return False
@@ -125,12 +129,12 @@ def is_store(sLat,sLng,storeName):
         return True
 
 def get_store_ID(sLat,sLng,storeName):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
     return int(c.execute("SELECT StoreID FROM Store WHERE Store.sLat=? AND Store.sLong=? AND Store.storeName=?",(sLat,sLng,storeName)).fetchone()[0])
 
 def insert_to_product(storeID,product_name,product_price):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     c.execute("INSERT INTO Product(StoID,productName,productPrice) VALUES(?,?,?)",(str(storeID),product_name,product_price))
@@ -139,13 +143,13 @@ def insert_to_product(storeID,product_name,product_price):
     conn.close()
 
 def get_possible_store_locations(storeName):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     return c.execute("SELECT Store.sLat,Store.sLong FROM Store WHERE Store.storeName =?",(storeName, )).fetchall()
 
 def get_all_locations(logID):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     return c.execute("SELECT User.uLat,User.uLong,Store.sLat,Store.sLong "
@@ -157,7 +161,7 @@ def get_all_locations(logID):
                     "LIMIT 1",(str(logID), )).fetchall()
 
 def show_user_history(logID):
-    conn = sqlite3.connect("database2")
+    conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
     return c.execute("SELECT distinct User.Time,Store.storeName,Product.productName,Product.productPrice "
@@ -167,3 +171,5 @@ def show_user_history(logID):
                      "INNER JOIN Product ON Product.StoID = Store.StoreID)"
                      "WHERE Log.LogID=? "
                      "ORDER BY Time DESC",(str(logID), )).fetchall()
+
+create_all_tables()

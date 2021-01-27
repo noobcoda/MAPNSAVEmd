@@ -27,8 +27,8 @@ if os.path.isfile("hashtablefile"):
 else:
     hashtable = utility.load_hashtable("hashtablefile",True)
 
+from backend.person_class import PersonNode
 from backend.databases import database
-from backend.person_class import PersonHashSymbol
 from backend.banners import ProductBanner
 from backend.GPSanddirections.directions import DirectionNode
 from backend.datastructures.mylinkedlist import LinkedList
@@ -49,11 +49,14 @@ class SignUpScreen(Screen):
             result = database.check_already_exists(email, username)
 
             if result == 1:
-                hashtable.insert(PersonHashSymbol(email,username,password))
+                hash_key,salt = hashtable.insert(email,username,password)
                 utility.save_hash_table(hashtable,"hashtablefile")
+                #make a new person
+                person = PersonNode(hash_key,salt)
+                user = person.make_user(MainInfo.my_lat,MainInfo.my_lon)
+                MainInfo.user = user
                 #add to database
-                database.insert_into_log_table(email, username)
-                MainInfo.person_id = database.get_person_ID(email, username)
+                database.insert_into_log_table(email,username,salt)
                 App.get_running_app().root.ids["screen_manager"].current = "home"
 
             elif result == 2:
@@ -61,13 +64,16 @@ class SignUpScreen(Screen):
                 popup.open()
 
             elif result == True:
-                hashtable.search(PersonHashSymbol(email,username,password))
+                hash_exists,person = hashtable.search(email,username,password)
+                if person.user == None:
+                    person.make_user(MainInfo.my_lat,MainInfo.my_lon)
+                MainInfo.user = person.user
                 #goes straight to home page, as they already exist.
                 App.get_running_app().root.ids["screen_manager"].current = "home"
 
 
     def check_email(self,email):
-        if '@' not in email and '.com' not in email:
+        if '@' not in email and '.com' or '@' not in email and '.co.uk' not in email:
             popup = MDDialog(title="Error!",text="Sorry, email is not valid!")
             popup.open()
             return False
@@ -80,8 +86,15 @@ class LoginScreen(Screen):
         username = self.ids.username.text
         given_password = self.ids.password.text
 
-        if hashtable.search(PersonHashSymbol(email,username,given_password)) is True:
-            MainInfo.person_id = database.get_person_ID(email, username)
+        #check if person is in database
+        database.check_already_exists(email,username)
+        database_salt = database.get_salt(email)
+
+        hash_exists, person = hashtable.search(email,username,given_password,database_salt)
+        if hash_exists:
+            if person.user == None:
+                person.make_user(MainInfo.my_lat,MainInfo.my_lon)
+            MainInfo.user = person.user
             return True
         else:
             popup = MDDialog(title="Error!",text="Sorry, you don't exist!")
@@ -93,8 +106,6 @@ class HomeScreen(Screen):
 
     def on_enter(self):
         self.ids.product_name.text = ""
-        MainInfo.p_category = None
-        MainInfo.p_name = None
         MainInfo.finalists = []
 
         # reset all button images
@@ -105,7 +116,7 @@ class HomeScreen(Screen):
 
     def submit_all(self):
         name = self.ids.product_name.text
-        MainInfo.p_name = name
+        MainInfo.user.productWish = name
 
 class HistoryScreen(Screen):
     def on_enter(self,*args):
@@ -256,10 +267,11 @@ class MainApp(MDApp):
         self.finalists = MainInfo.start()
 
         #if self.finalists is empty:
-        if len(self.finalists) == False:
+        if self.finalists == False:
             popup = Popup(title="Error!",content=Label(text="We couldn't find any results near you :("),size_hint=[.5,.3])
             popup.bind(on_dismiss=self.change_to_home)
             popup.open()
+            return False
 
         hex_colours = ["#BEC6C3", "#FCDFCE", "#E0D7D3", "#8A7D80", "#626670"]
 
@@ -301,7 +313,6 @@ class MainApp(MDApp):
 
         #switch screens
         self.change_screen("shop_map_screen")
-
 
 MainInfo.clear()
 MainApp().run()
