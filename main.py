@@ -31,6 +31,7 @@ from backend.person_class import PersonNode
 from backend.databases import database
 from backend.banners import ProductBanner
 from backend.GPSanddirections.directions import DirectionNode
+from backend.GPSanddirections.GPS import GPSHelper
 from backend.datastructures.mylinkedlist import LinkedList
 from backend.backend import MainInfo
 
@@ -252,9 +253,9 @@ class MainApp(MDApp):
         self.change_screen("home")
 
     def on_start(self):
-        #my_lat,my_lon = GPSHelper.run()
-        my_lat = 51.553538
-        my_lon = -0.259801
+        my_lat,my_lon = GPSHelper.run()
+        #my_lat = 51.553538
+        #my_lon = -0.259801
         MainInfo.my_lat = my_lat
         MainInfo.my_lon = my_lon
 

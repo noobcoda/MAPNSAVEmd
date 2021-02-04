@@ -77,8 +77,7 @@ class MainInfo:
                 success_count += 1  # id of each store
                 store = Store(places['Latitude'][index], places['Longitude'][index], places['Categories'][index],
                               places['Name'][index])
-
-                new_priceAndProductDict, new_from_shopList = store.get_product_price(user.productWish)  # == shop name, not product name
+                new_priceAndProductDict, new_from_shopList = store.get_product_price(user.productWish)
                 priceAndProductDict.update(new_priceAndProductDict)
                 from_shopList += new_from_shopList
                 Calculation.toBeSortedListPrices = []
