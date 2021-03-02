@@ -5,7 +5,7 @@ Circular Date & Time Picker for Kivy
 (currently only time, date coming soon)
 
 Based on [CircularLayout](https://github.com/kivy-garden/garden.circularlayout).
-The main aim is to provide a date and time selector similar to the
+The main.py aim is to provide a date and time selector similar to the
 one found in Android KitKat+.
 
 Simple usage

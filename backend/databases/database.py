@@ -160,16 +160,24 @@ def get_all_locations(logID):
                     "ORDER BY Time DESC "
                     "LIMIT 1",(str(logID), )).fetchall()
 
-def show_user_history(logID):
+def show_user_history_and_count_searches(logID):
+    #aggregated SQL
     conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
-    return c.execute("SELECT distinct User.Time,Store.storeName,Product.productName,Product.productPrice "
+    response = c.execute("SELECT distinct User.Time,Store.storeName,Product.productName,Product.productPrice "
                      "FROM (((Log "
                      "INNER JOIN User ON Log.LogID = User.UID)"
                      "INNER JOIN Store ON User.SID = Store.StoreID)"
                      "INNER JOIN Product ON Product.StoID = Store.StoreID)"
                      "WHERE Log.LogID=? "
-                     "ORDER BY Time DESC",(str(logID), )).fetchall()
+                     "ORDER BY Time ASC",(str(logID), )).fetchall()
+
+    #adding up the number of searches
+    searchCount = 0
+    for add in response:
+        searchCount += 1
+
+    return response,searchCount
 
 create_all_tables()

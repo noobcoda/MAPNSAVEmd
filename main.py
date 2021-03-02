@@ -13,7 +13,8 @@ from kivymd.uix.list import ThreeLineListItem
 
 #APIs
 import urllib.request
-from backend.my_keys import DIRECTIONS_KEY
+from backend.GPSanddirections.secret_keys import DIRECTIONS_KEY
+#for safety reasons, this file is not uploaded on github.
 
 #other
 import json
@@ -58,6 +59,7 @@ class SignUpScreen(Screen):
                 MainInfo.user = user
                 #add to database
                 database.insert_into_log_table(email,username,salt)
+                MainInfo.person_id = database.get_person_ID(email,username)
                 App.get_running_app().root.ids["screen_manager"].current = "home"
 
             elif result == 2:
@@ -69,6 +71,7 @@ class SignUpScreen(Screen):
                 if person.user == None:
                     person.make_user(MainInfo.my_lat,MainInfo.my_lon)
                 MainInfo.user = person.user
+                MainInfo.person_id = database.get_person_ID(email,username)
                 #goes straight to home page, as they already exist.
                 App.get_running_app().root.ids["screen_manager"].current = "home"
 
@@ -96,6 +99,7 @@ class LoginScreen(Screen):
             if person.user == None:
                 person.make_user(MainInfo.my_lat,MainInfo.my_lon)
             MainInfo.user = person.user
+            MainInfo.person_id = database.get_person_ID(email,username)
             return True
         else:
             popup = MDDialog(title="Error!",text="Sorry, you don't exist!")
@@ -122,12 +126,16 @@ class HomeScreen(Screen):
 class HistoryScreen(Screen):
     def on_enter(self,*args):
 
-        results = database.show_user_history(MainInfo.person_id)
+        results,searchCount = database.show_user_history_and_count_searches(MainInfo.person_id)
 
+        current_num = 0
         for each in results:
-            item = ThreeLineListItem(text="%s" % (str(each[0])), secondary_text="Product: %s" % (str(each[2])),
+            current_num += 1
+            item = ThreeLineListItem(text="%s" % (str(each[0])), secondary_text="Product: %s, product %s/%s" % (str(each[2]),str(current_num),str(searchCount)),
                                      tertiary_text="%s" % (str(each[1])))
             self.ids["info_list"].add_widget(item)
+
+
 
 class ShopScreen(Screen):
     pass
@@ -230,7 +238,7 @@ class MyButtons(Button):
             self.hold_down(img2)
 
     def overwrite_id(self, the_id):
-        MainInfo.p_category = the_id
+        MainInfo.user.productType = the_id
 
     def hold_down(self, image):
         self.background_normal = image
@@ -253,11 +261,9 @@ class MainApp(MDApp):
         self.change_screen("home")
 
     def on_start(self):
-        my_lat,my_lon = GPSHelper.run()
-        #my_lat = 51.553538
-        #my_lon = -0.259801
-        MainInfo.my_lat = my_lat
-        MainInfo.my_lon = my_lon
+        #MainInfo.my_lat,MainInfo.my_lon = GPSHelper.run()
+        MainInfo.my_lat = 51.553538
+        MainInfo.my_lon = -0.259801
 
     def load_shop_screen(self):
 
@@ -270,6 +276,11 @@ class MainApp(MDApp):
         #if self.finalists is empty:
         if self.finalists == False:
             popup = Popup(title="Error!",content=Label(text="We couldn't find any results near you :("),size_hint=[.5,.3])
+            popup.bind(on_dismiss=self.change_to_home)
+            popup.open()
+            return False
+        elif self.finalists == 3:
+            popup = Popup(title="Error!",content=Label(text="Empty field. Please retype."),size_hint=[.5,.3])
             popup.bind(on_dismiss=self.change_to_home)
             popup.open()
             return False
@@ -310,7 +321,7 @@ class MainApp(MDApp):
         database.insert_to_product(storeID, productName, productPrice)
 
         ###ADD EVERYTHING TO A DATABASE###
-        database.insert_user_table(MainInfo.person_id, storeID, MainInfo.my_lat, MainInfo.my_lon, MainInfo.p_name)
+        database.insert_user_table(MainInfo.person_id, storeID, MainInfo.my_lat, MainInfo.my_lon, MainInfo.user.productWish)
 
         #switch screens
         self.change_screen("shop_map_screen")

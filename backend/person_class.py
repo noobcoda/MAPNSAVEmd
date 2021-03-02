@@ -1,5 +1,5 @@
 import googlemaps
-from backend.my_keys import KEY
+from backend.GPSanddirections.secret_keys import KEY
 import hashlib
 gmaps = googlemaps.Client(key=KEY)
 

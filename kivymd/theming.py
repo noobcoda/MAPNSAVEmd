@@ -9,7 +9,7 @@ Themes/Theming
 Material App
 ------------
 
-The main class of your application, which in `Kivy` inherits from the App class,
+The main.py class of your application, which in `Kivy` inherits from the App class,
 in `KivyMD` must inherit from the `MDApp` class. The `MDApp` class has
 properties that allow you to control application properties
 such as :attr:`color/style/font` of interface elements and much more.
@@ -17,7 +17,7 @@ such as :attr:`color/style/font` of interface elements and much more.
 Control material properties
 ---------------------------
 
-The main application class inherited from the `MDApp` class has the :attr:`theme_cls`
+The main.py application class inherited from the `MDApp` class has the :attr:`theme_cls`
 attribute, with which you control the material properties of your application.
 """
 
