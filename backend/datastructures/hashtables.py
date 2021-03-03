@@ -5,8 +5,7 @@ import os
 class HashTable:
 
     def __init__(self):
-        self.hashList = [LinkedList(),LinkedList(),LinkedList(),LinkedList(),LinkedList(),
-                         LinkedList(),LinkedList(),LinkedList(),LinkedList(),LinkedList()] #(10)
+        self.hashList = [LinkedList()]*10 #(10)
 
     def insert(self,email,username,password):
         key,salt,index = my_hash(email,username,password,os.urandom(32))
