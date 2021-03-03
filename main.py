@@ -30,7 +30,7 @@ else:
 
 from backend.person_class import PersonNode
 from backend.databases import database
-from backend.banners import ProductBanner
+from frontend.banners import ProductBanner
 from backend.GPSanddirections.directions import DirectionNode
 from backend.GPSanddirections.GPS import GPSHelper
 from backend.datastructures.mylinkedlist import LinkedList
