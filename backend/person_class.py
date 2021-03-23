@@ -22,8 +22,8 @@ def my_hash(email,username,password,salt):
 
 class PersonNode:
     def __init__(self,key,salt):
+        self.keyValue = key
         self.salt = salt
-        self.key = key
         self.next = None
         self.email = ''
         self.password = ''

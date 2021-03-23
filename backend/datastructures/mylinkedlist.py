@@ -1,7 +1,15 @@
+from backend.person_class import PersonNode
+
 class LinkedList:
     def __init__(self):
         self.size = 0
         self.head = None
+
+    def make_node(self,key,salt):
+        person = PersonNode(key,salt)
+        person.keyValue = key
+        self.append(person)
+        return person
 
     def append(self,node):
         if self.head == None:
@@ -35,11 +43,11 @@ class LinkedList:
             return False,False
         else:
             current_node = self.head
-            if current_node.key == key_value:
+            if key_value == current_node.keyValue:
                 return True,current_node
 
             while current_node.next != None:
-                if current_node.key == key_value:
-                    return True
+                if key_value == current_node.keyValue:
+                    return True,current_node
                 current_node = current_node.next
             return False,False

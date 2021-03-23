@@ -160,8 +160,7 @@ def get_all_locations(logID):
                     "ORDER BY Time DESC "
                     "LIMIT 1",(str(logID), )).fetchall()
 
-def show_user_history_and_count_searches(logID):
-    #aggregated SQL
+def show_user_history(logID):
     conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
@@ -173,11 +172,18 @@ def show_user_history_and_count_searches(logID):
                      "WHERE Log.LogID=? "
                      "ORDER BY Time ASC",(str(logID), )).fetchall()
 
-    #adding up the number of searches
-    searchCount = 0
-    for add in response:
-        searchCount += 1
+    return response
 
-    return response,searchCount
+def count_search_history(logID):
+    #aggregated SQL
+    conn = sqlite3.connect("database3.db")
+    c = conn.cursor()
+
+
+    response = c.execute("SELECT COUNT (ProductSearch) "
+                         "FROM User "
+                         "WHERE UID=%s"%(logID)).fetchone()
+
+    return response
 
 create_all_tables()

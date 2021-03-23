@@ -14,7 +14,7 @@ class MainInfo:
         self.person_id = None
 
     def start(self):
-        if self.user.productWish is None or self.user.productType is None:
+        if self.user.productWish == "" or self.user.productType == "":
             print("Empty field.")
             return 3
         elif self.user.productWish is not None and self.user.productType is not None and self.my_lat is not None and self.my_lon is not None:

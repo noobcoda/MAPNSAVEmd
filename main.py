@@ -28,7 +28,6 @@ if os.path.isfile("hashtablefile"):
 else:
     hashtable = utility.load_hashtable("hashtablefile",True)
 
-from backend.person_class import PersonNode
 from backend.databases import database
 from frontend.banners import ProductBanner
 from backend.GPSanddirections.directions import DirectionNode
@@ -44,23 +43,26 @@ class SignUpScreen(Screen):
         username = self.ids.username_new.text
         password = self.ids.password_new.text
 
+        if email == "" or username=="" or password == "":
+            popup = MDDialog(title="Error!", text="Please provide valid inputs.")
+            popup.open()
+
         #check if email is in correct format
-        if self.check_email(email) == True:
+        elif email != "" and self.check_email(email) == True:
 
             #check if person exists
             result = database.check_already_exists(email, username)
 
             if result == 1:
-                hash_key,salt = hashtable.insert(email,username,password)
+                hash_key,salt,person = hashtable.insert(email,username,password)
                 utility.save_hash_table(hashtable,"hashtablefile")
                 #make a new person
-                person = PersonNode(hash_key,salt)
                 user = person.make_user(MainInfo.my_lat,MainInfo.my_lon)
                 MainInfo.user = user
                 #add to database
                 database.insert_into_log_table(email,username,salt)
                 MainInfo.person_id = database.get_person_ID(email,username)
-                App.get_running_app().root.ids["screen_manager"].current = "home"
+                App.get_running_app().root.ids["screen_manager"].current = "login"
 
             elif result == 2:
                 popup = MDDialog(title="Error!", text="Sorry, email is taken!")
@@ -126,16 +128,13 @@ class HomeScreen(Screen):
 class HistoryScreen(Screen):
     def on_enter(self,*args):
 
-        results,searchCount = database.show_user_history_and_count_searches(MainInfo.person_id)
+        results = database.show_user_history(MainInfo.person_id)
+        searchCount = database.count_search_history(MainInfo.person_id)
 
-        current_num = 0
         for each in results:
-            current_num += 1
-            item = ThreeLineListItem(text="%s" % (str(each[0])), secondary_text="Product: %s, product %s/%s" % (str(each[2]),str(current_num),str(searchCount)),
+            item = ThreeLineListItem(text="%s" % (str(each[0])), secondary_text="Product: %s, Total number of products: %s" % (str(each[2]),str(searchCount)),
                                      tertiary_text="%s" % (str(each[1])))
             self.ids["info_list"].add_widget(item)
-
-
 
 class ShopScreen(Screen):
     pass
