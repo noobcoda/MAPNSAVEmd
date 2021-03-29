@@ -1,15 +1,7 @@
-from backend.person_class import PersonNode
-
 class LinkedList:
     def __init__(self):
         self.size = 0
         self.head = None
-
-    def make_node(self,key,salt):
-        person = PersonNode(key,salt)
-        person.keyValue = key
-        self.append(person)
-        return person
 
     def append(self,node):
         if self.head == None:
@@ -38,7 +30,7 @@ class LinkedList:
     def get_size(self):
         return self.size
 
-    def find_hash(self,key_value):
+    def find(self,key_value):
         if self.head == None:
             return False,False
         else:

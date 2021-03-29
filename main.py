@@ -56,7 +56,7 @@ class SignUpScreen(Screen):
             if result == 1:
                 hash_key,salt,person = hashtable.insert(email,username,password)
                 utility.save_hash_table(hashtable,"hashtablefile")
-                #make a new person
+                #make a new user
                 user = person.make_user(MainInfo.my_lat,MainInfo.my_lon)
                 MainInfo.user = user
                 #add to database
@@ -69,14 +69,7 @@ class SignUpScreen(Screen):
                 popup.open()
 
             elif result == True:
-                hash_exists,person = hashtable.search(email,username,password)
-                if person.user == None:
-                    person.make_user(MainInfo.my_lat,MainInfo.my_lon)
-                MainInfo.user = person.user
-                MainInfo.person_id = database.get_person_ID(email,username)
-                #goes straight to home page, as they already exist.
-                App.get_running_app().root.ids["screen_manager"].current = "home"
-
+                App.get_running_app().root.ids["screen_manager"].current = "login"
 
     def check_email(self,email):
         if '@' not in email and '.com' or '@' not in email and '.co.uk' not in email:
@@ -96,14 +89,14 @@ class LoginScreen(Screen):
         database.check_already_exists(email,username)
         database_salt = database.get_salt(email)
 
-        hash_exists, person = hashtable.search(email,username,given_password,database_salt)
-        if hash_exists:
+        person = hashtable.search(email,username,given_password,database_salt)
+        if person != False:
             if person.user == None:
                 person.make_user(MainInfo.my_lat,MainInfo.my_lon)
             MainInfo.user = person.user
             MainInfo.person_id = database.get_person_ID(email,username)
             return True
-        else:
+        elif person==False:
             popup = MDDialog(title="Error!",text="Sorry, you don't exist!")
             popup.open()
             App.get_running_app().root.ids["screen_manager"].current = "sign_up"
@@ -127,7 +120,7 @@ class HomeScreen(Screen):
 
 class HistoryScreen(Screen):
     def on_enter(self,*args):
-
+        self.ids["info_list"].clear_widgets()
         results = database.show_user_history(MainInfo.person_id)
         searchCount = database.count_search_history(MainInfo.person_id)
 

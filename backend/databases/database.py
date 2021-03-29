@@ -179,7 +179,6 @@ def count_search_history(logID):
     conn = sqlite3.connect("database3.db")
     c = conn.cursor()
 
-
     response = c.execute("SELECT COUNT (ProductSearch) "
                          "FROM User "
                          "WHERE UID=%s"%(logID)).fetchone()

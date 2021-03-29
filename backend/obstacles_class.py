@@ -1,11 +1,13 @@
 #SELENIUM MODULES
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 PATH = "C:\Program Files (x86)\chromedriver.exe"
+#driver = webdriver.Chrome(ChromeDriverManager(version="87").install())
 
 class Prices:
 
@@ -96,6 +98,7 @@ class Store:
         Price = Prices(productName, self.store_name)
         if "supermarket" in self.category:
             pricesWithProductsDict, shopName = Price.get_groceries_price(webdriver.Chrome(PATH))
+            #pricesWithProductsDict, shopName = Price.get_groceries_price(driver)
             return pricesWithProductsDict, shopName
 
 class Product(Store):
